@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="مافیا AI — اولین پلتفرم آنلاین مافیا با گردانندهٔ هوش مصنوعی، تورنمنت‌های زنده، رتبه‌بندی رقابتی و تحلیل حرفه‌ای بازی.">
+<title>مافیا AI — شهر هرگز نمی‌خوابد</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&family=Chakra+Petch:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#04060c;--bg2:#070a13;--bg3:#0c111d;--bg4:#141b2b;
+  --bd:#ffffff0d;--bd2:#ffffff14;--bd3:#ffffff26;
+  --tx:#e7ecf6;--tx2:#8492a8;--tx3:#46556b;
+  --red:#e8324a;--red2:#ff5a6e;--redb:#e8324a18;
+  --pur:#8b5cf6;--purb:#8b5cf618;
+  --gold:#f5b324;--goldb:#f5b32418;
+  --grn:#16d196;--blue:#3b82f6;
+  --ff:'Vazirmatn',Tahoma,sans-serif;
+  --fl:'Chakra Petch',sans-serif;
+  --mx:1180px;
+  --ease:cubic-bezier(.22,.61,.36,1);
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--tx);font-family:var(--ff);font-size:15px;line-height:1.6;overflow-x:hidden;position:relative}
+::selection{background:var(--red);color:#fff}
+::-webkit-scrollbar{width:9px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:#1c2536;border-radius:9px;border:2px solid var(--bg)}::-webkit-scrollbar-thumb:hover{background:#2a3650}
+a{color:inherit;text-decoration:none}
+.latin{font-family:var(--fl);font-feature-settings:"tnum";letter-spacing:.02em}
+img{max-width:100%}
+
+/* ── atmosphere ── */
+#bgcanvas{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.55}
+.mesh{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.5;animation:drift 22s var(--ease) infinite alternate}
+.blob.r{width:46vw;height:46vw;background:radial-gradient(circle,#e8324a55,transparent 70%);top:-12vw;right:-8vw}
+.blob.p{width:42vw;height:42vw;background:radial-gradient(circle,#8b5cf64d,transparent 70%);top:38vh;left:-12vw;animation-delay:-7s}
+.blob.g{width:34vw;height:34vw;background:radial-gradient(circle,#f5b32433,transparent 70%);bottom:-10vw;right:18vw;animation-delay:-13s}
+@keyframes drift{to{transform:translate3d(4vw,3vh,0) scale(1.12)}}
+.grain{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.05;mix-blend-mode:overlay;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+.scan{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.4;background:repeating-linear-gradient(0deg,#0000 0 3px,#00000038 3px 4px)}
+.wrap{position:relative;z-index:2}
+.cont{max-width:var(--mx);margin:0 auto;padding:0 22px}
+
+/* ── nav ── */
+header{position:fixed;top:0;left:0;right:0;z-index:60;transition:background .35s,border-color .35s,backdrop-filter .35s;border-bottom:1px solid transparent}
+header.scrolled{background:#05070ecc;backdrop-filter:blur(16px);border-color:var(--bd2)}
+.nav{max-width:var(--mx);margin:0 auto;height:70px;display:flex;align-items:center;gap:24px;padding:0 22px}
+.logo{display:flex;align-items:center;gap:10px;flex-shrink:0}
+.logo .mk{width:34px;height:34px;flex-shrink:0;filter:drop-shadow(0 0 10px #e8324a66)}
+.logo .wm{font-weight:900;font-size:21px;letter-spacing:-.5px;display:flex;align-items:baseline;gap:5px}
+.logo .wm b{color:var(--red)}
+.logo .wm .ai{font-family:var(--fl);font-size:11px;font-weight:700;color:var(--gold);border:1px solid var(--gold);padding:1px 5px;border-radius:5px;letter-spacing:1px}
+.nlinks{display:flex;gap:4px;margin-right:auto}
+.nlinks a{font-size:14px;color:var(--tx2);padding:8px 13px;border-radius:9px;transition:color .2s,background .2s;font-weight:500}
+.nlinks a:hover{color:var(--tx);background:#ffffff0a}
+.nav-cta{display:flex;align-items:center;gap:10px;flex-shrink:0}
+.burger{display:none;width:40px;height:40px;border-radius:10px;border:1px solid var(--bd2);background:#ffffff08;color:var(--tx);font-size:18px;cursor:pointer}
+
+/* ── buttons ── */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-family:var(--ff);font-weight:700;cursor:pointer;border:none;border-radius:13px;transition:transform .14s var(--ease),box-shadow .25s,filter .2s,background .25s;white-space:nowrap;position:relative;overflow:hidden}
+.btn:active{transform:translateY(1px) scale(.99)}
+.btn-lg{padding:15px 30px;font-size:16px}
+.btn-md{padding:11px 22px;font-size:14px}
+.btn-sm{padding:8px 16px;font-size:13px}
+.btn-p{background:linear-gradient(120deg,var(--red),#c01f38);color:#fff;box-shadow:0 8px 30px -8px #e8324aaa,inset 0 1px 0 #ffffff33}
+.btn-p:hover{filter:brightness(1.08);box-shadow:0 12px 42px -8px #e8324acc,inset 0 1px 0 #ffffff44;transform:translateY(-2px)}
+.btn-p::after{content:'';position:absolute;top:0;left:-120%;width:60%;height:100%;background:linear-gradient(100deg,#fff0,#ffffff55,#fff0);transform:skewX(-18deg);transition:left .6s}
+.btn-p:hover::after{left:130%}
+.btn-gold{background:linear-gradient(120deg,var(--gold),#d18f10);color:#1a1304;box-shadow:0 8px 30px -8px #f5b324aa,inset 0 1px 0 #ffffff55}
+.btn-gold:hover{filter:brightness(1.07);transform:translateY(-2px)}
+.btn-ghost{background:#ffffff0a;color:var(--tx);border:1px solid var(--bd3);backdrop-filter:blur(6px)}
+.btn-ghost:hover{background:#ffffff14;border-color:#ffffff44;transform:translateY(-2px)}
+
+/* ── shared ── */
+.eyebrow{display:inline-flex;align-items:center;gap:8px;font-family:var(--fl);font-size:12px;font-weight:600;letter-spacing:2px;color:var(--gold);text-transform:uppercase;padding:7px 14px;border-radius:40px;border:1px solid var(--goldb);background:linear-gradient(var(--bg3),var(--bg3)) padding-box,linear-gradient(120deg,#f5b32466,#0000) border-box;border:1px solid transparent}
+.dot{width:6px;height:6px;border-radius:50%;background:var(--gold);box-shadow:0 0 8px var(--gold);animation:blink 1.8s infinite}
+@keyframes blink{50%{opacity:.3}}
+.kicker{font-family:var(--fl);font-size:13px;font-weight:600;letter-spacing:3px;color:var(--red2);text-transform:uppercase}
+.sec{padding:clamp(70px,11vw,140px) 0;position:relative}
+.sec-head{max-width:680px;margin:0 auto clamp(40px,6vw,64px);text-align:center}
+.sec-head.right{margin-right:0;text-align:right}
+h1,h2,h3{line-height:1.12;letter-spacing:-.02em;font-weight:900}
+.h-xl{font-size:clamp(44px,8.5vw,92px);font-weight:900;letter-spacing:-.035em}
+.h-lg{font-size:clamp(32px,5.2vw,56px)}
+.h-md{font-size:clamp(24px,3.4vw,36px)}
+.lead{color:var(--tx2);font-size:clamp(16px,2.2vw,19px);line-height:1.75;font-weight:400}
+.grad{background:linear-gradient(110deg,#fff 10%,var(--red2) 60%,var(--red));-webkit-background-clip:text;background-clip:text;color:transparent}
+.grad-g{background:linear-gradient(110deg,#fff,var(--gold));-webkit-background-clip:text;background-clip:text;color:transparent}
+.card{background:linear-gradient(180deg,var(--bg3),var(--bg2));border:1px solid var(--bd2);border-radius:20px;position:relative;overflow:hidden}
+.card-glow::before{content:'';position:absolute;inset:0;border-radius:inherit;padding:1px;background:linear-gradient(140deg,#ffffff22,transparent 40%);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none}
+
+/* ── reveal ── */
+.rv{opacity:0;transform:translateY(34px);transition:opacity .8s var(--ease),transform .8s var(--ease);transition-delay:var(--d,0s)}
+.rv.in{opacity:1;transform:none}
+.rv-s{opacity:0;transform:scale(.94);transition:opacity .7s var(--ease),transform .7s var(--ease);transition-delay:var(--d,0s)}
+.rv-s.in{opacity:1;transform:none}
+
+/* ════ HERO ════ */
+.hero{min-height:100vh;display:flex;align-items:center;position:relative;padding:120px 0 60px;overflow:hidden}
+.hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:50px;align-items:center}
+.hero h1{margin:22px 0 24px}
+.hero .lead{max-width:520px}
+.hero-cta{display:flex;gap:14px;flex-wrap:wrap;margin:34px 0 30px}
+.trust{display:flex;gap:30px;flex-wrap:wrap;padding-top:26px;border-top:1px solid var(--bd2)}
+.trust .n{font-family:var(--fl);font-size:30px;font-weight:700;line-height:1;display:block}
+.trust .l{font-size:12px;color:var(--tx2);margin-top:5px}
+.trust .red{color:var(--red2)}.trust .gold{color:var(--gold)}.trust .grn{color:var(--grn)}
+
+/* hero mockup */
+.mock{position:relative;perspective:1600px}
+.mock-card{background:linear-gradient(165deg,#0d1322,#070b14);border:1px solid var(--bd2);border-radius:22px;padding:18px;box-shadow:0 40px 90px -30px #000,0 0 0 1px #ffffff0a inset;transform:rotateY(-11deg) rotateX(5deg);transform-style:preserve-3d;animation:float 7s var(--ease) infinite alternate}
+@keyframes float{to{transform:rotateY(-7deg) rotateX(3deg) translateY(-12px)}}
+.mc-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.mc-phase{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:var(--pur);background:#16082c;border:1px solid #8b5cf63a;padding:5px 11px;border-radius:8px}
+.mc-timer{width:38px;height:38px;border-radius:50%;border:2px solid var(--bd3);display:flex;align-items:center;justify-content:center;font-family:var(--fl);font-weight:700;font-size:14px;color:var(--blue)}
+.mc-players{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}
+.mc-pl{aspect-ratio:1;border-radius:12px;background:#121a2b;border:1px solid var(--bd);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:18px;position:relative}
+.mc-pl.dead{opacity:.3;filter:grayscale(1)}
+.mc-pl.sel{border-color:var(--red);background:var(--redb);box-shadow:0 0 0 1px var(--red)}
+.mc-pl small{font-size:9px;color:var(--tx2)}
+.mc-nar{display:flex;gap:9px;align-items:center;background:#0a1120;border:1px solid var(--bd);border-radius:13px;padding:10px 12px}
+.mc-av{width:32px;height:32px;border-radius:9px;background:linear-gradient(135deg,var(--red),var(--pur));display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+.mc-nar p{font-size:11.5px;color:var(--tx2);line-height:1.5}
+.mc-nar b{color:var(--tx)}
+.float-badge{position:absolute;background:#0c1322ee;backdrop-filter:blur(8px);border:1px solid var(--bd3);border-radius:14px;padding:10px 14px;display:flex;align-items:center;gap:9px;box-shadow:0 16px 40px -16px #000;animation:bob 4.5s ease-in-out infinite}
+.float-badge .ic{width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:15px}
+.fb1{top:6%;left:-7%;animation-delay:-1s}
+.fb2{bottom:10%;right:-6%;animation-delay:-2.5s}
+@keyframes bob{50%{transform:translateY(-12px)}}
+.fb-t{font-size:11px;font-weight:700;line-height:1.3}
+.fb-s{font-size:9px;color:var(--tx2)}
+.scrollcue{position:absolute;bottom:22px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--tx3);font-size:11px;font-family:var(--fl);letter-spacing:2px}
+.scrollcue .m{width:22px;height:36px;border:2px solid var(--bd3);border-radius:12px;position:relative}
+.scrollcue .m::after{content:'';position:absolute;top:6px;left:50%;transform:translateX(-50%);width:4px;height:7px;border-radius:3px;background:var(--red);animation:wheel 1.6s infinite}
+@keyframes wheel{0%{opacity:0;top:5px}40%{opacity:1}100%{opacity:0;top:16px}}
+
+/* ── marquee ── */
+.marquee{border-top:1px solid var(--bd);border-bottom:1px solid var(--bd);padding:22px 0;overflow:hidden;background:#04060caa;-webkit-mask:linear-gradient(90deg,#0000,#000 12%,#000 88%,#0000)}
+.mq-track{display:flex;gap:60px;width:max-content;animation:mq 28s linear infinite}
+.mq-track span{font-family:var(--fl);font-size:18px;font-weight:600;color:#43536b;letter-spacing:1px;display:flex;align-items:center;gap:10px;white-space:nowrap}
+@keyframes mq{to{transform:translateX(50%)}}
+
+/* ── feature section generic ── */
+.split{display:grid;grid-template-columns:1fr 1fr;gap:clamp(30px,5vw,64px);align-items:center}
+.split.rev{direction:ltr}.split.rev>*{direction:rtl}
+.ftag{display:inline-flex;align-items:center;gap:8px;font-family:var(--fl);font-size:12px;font-weight:600;letter-spacing:2px;text-transform:uppercase;margin-bottom:18px}
+.ftag .sq{width:22px;height:22px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:12px}
+.flist{margin-top:24px;display:flex;flex-direction:column;gap:14px}
+.fli{display:flex;gap:12px;align-items:flex-start}
+.fli .ck{width:22px;height:22px;border-radius:7px;background:var(--redb);color:var(--red2);display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;margin-top:2px}
+.fli b{font-weight:700}.fli p{color:var(--tx2);font-size:13.5px;margin-top:1px}
+
+/* AI gm mock */
+.ai-mock{padding:20px;border-radius:22px}
+.chat{display:flex;flex-direction:column;gap:12px}
+.cmsg{display:flex;gap:10px;align-items:flex-start;opacity:0;transform:translateY(10px);animation:msgin .6s var(--ease) forwards}
+.cmsg:nth-child(1){animation-delay:.1s}.cmsg:nth-child(2){animation-delay:.5s}.cmsg:nth-child(3){animation-delay:1.1s}.cmsg:nth-child(4){animation-delay:1.7s}
+@keyframes msgin{to{opacity:1;transform:none}}
+.cmsg .ava{width:34px;height:34px;border-radius:10px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:16px}
+.cmsg.gm .ava{background:linear-gradient(135deg,var(--red),var(--pur))}
+.cmsg.pl .ava{background:#1a2336;font-size:13px;color:var(--tx2)}
+.bub{background:#0a1120;border:1px solid var(--bd);border-radius:14px;border-top-right-radius:4px;padding:10px 13px;font-size:13px;line-height:1.6}
+.cmsg.gm .bub{background:linear-gradient(180deg,#160a22,#0d0716);border-color:#8b5cf62e}
+.bub .who{font-size:10px;color:var(--gold);font-family:var(--fl);font-weight:600;letter-spacing:1px;margin-bottom:3px;display:block}
+.bub b{color:var(--red2)}
+
+/* tournament bracket */
+.bracket{display:flex;gap:26px;align-items:center;justify-content:center;direction:rtl;overflow-x:auto;padding:10px 4px 16px}
+.bcol{display:flex;flex-direction:column;gap:18px;align-items:center;flex-shrink:0}
+.bcol .lbl{font-family:var(--fl);font-size:11px;letter-spacing:1px;color:var(--tx3);text-transform:uppercase}
+.match{background:var(--bg3);border:1px solid var(--bd2);border-radius:11px;overflow:hidden;width:138px}
+.match .row{display:flex;align-items:center;gap:7px;padding:8px 11px;font-size:12px;border-bottom:1px solid var(--bd)}
+.match .row:last-child{border:none}
+.match .row.w{color:var(--gold);background:var(--goldb);font-weight:700}
+.match .row.l{color:var(--tx3)}
+.match.final{border-color:#f5b32455;box-shadow:0 0 26px -8px #f5b32455}
+.match.final .row{color:var(--gold);background:var(--goldb)}
+.champ{width:138px;border:1.5px dashed var(--gold);border-radius:11px;background:var(--goldb);padding:14px;text-align:center;color:var(--gold);font-weight:800}
+.prize{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:30px}
+.prize .p{background:var(--bg3);border:1px solid var(--bd2);border-radius:14px;padding:14px 20px;text-align:center;min-width:120px}
+.prize .p .pl{font-size:11px;color:var(--tx2)}
+.prize .p .pn{font-family:var(--fl);font-size:24px;font-weight:700;margin-top:3px}
+
+/* ranks ladder */
+.ranks{display:flex;flex-direction:column;gap:10px}
+.rank{display:flex;align-items:center;gap:14px;padding:14px 16px;border-radius:14px;background:var(--bg3);border:1px solid var(--bd2);transition:transform .25s var(--ease),border-color .25s}
+.rank:hover{transform:translateX(-6px);border-color:var(--bd3)}
+.rank.me{border-color:var(--red);background:linear-gradient(100deg,var(--redb),transparent)}
+.rank .em{width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;background:#0e1424}
+.rank .nm{font-weight:800;font-size:15px}
+.rank .el{font-size:12px;color:var(--tx2)}
+.rank .badge{margin-right:auto;font-family:var(--fl);font-size:13px;font-weight:700}
+.ach-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:12px;margin-top:26px}
+.achv{background:var(--bg3);border:1px solid var(--bd2);border-radius:15px;padding:16px;text-align:center;transition:transform .25s var(--ease)}
+.achv:hover{transform:translateY(-5px)}
+.achv.un{border-color:#f5b32440;background:linear-gradient(180deg,var(--goldb),transparent)}
+.achv .ai-ic{width:52px;height:52px;border-radius:50%;margin:0 auto 10px;display:flex;align-items:center;justify-content:center;font-size:24px;background:#0e1424}
+.achv.un .ai-ic{background:var(--goldb);box-shadow:0 0 22px -6px var(--gold)}
+.achv .at{font-weight:700;font-size:13px}
+.achv .ad{font-size:11px;color:var(--tx2);margin-top:3px}
+.achv .xp{margin-top:9px;font-family:var(--fl);font-size:11px;color:var(--gold);font-weight:700}
+
+/* voice */
+.voice-panel{padding:20px;border-radius:22px}
+.vrow2{display:flex;align-items:center;gap:12px;padding:11px 13px;border-radius:13px;background:#0a1120;border:1px solid var(--bd);margin-bottom:9px;transition:border-color .3s}
+.vrow2.speak{border-color:var(--grn);box-shadow:0 0 0 1px #16d19633,0 0 22px -10px var(--grn)}
+.vrow2 .va{width:38px;height:38px;border-radius:11px;background:linear-gradient(135deg,var(--blue),var(--pur));display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;flex-shrink:0}
+.vrow2 .vn{font-weight:600;font-size:13px;flex:1}
+.vrow2 .vr{font-size:10px;color:var(--tx3);font-family:var(--fl)}
+.wave{display:flex;align-items:center;gap:2px;height:20px}
+.wave span{width:3px;border-radius:3px;background:var(--grn);animation:wv .7s ease-in-out infinite alternate}
+.wave span:nth-child(1){height:30%;animation-delay:0s}.wave span:nth-child(2){height:70%;animation-delay:.1s}.wave span:nth-child(3){height:100%;animation-delay:.2s}.wave span:nth-child(4){height:55%;animation-delay:.15s}.wave span:nth-child(5){height:35%;animation-delay:.05s}
+@keyframes wv{to{height:25%}}
+.muted{color:var(--tx3);font-size:13px}
+
+/* analysis */
+.an-mock{padding:20px;border-radius:22px}
+.an-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
+.an-stat{background:#0a1120;border:1px solid var(--bd);border-radius:12px;padding:12px;text-align:center}
+.an-stat .v{font-family:var(--fl);font-size:22px;font-weight:700}
+.an-stat .k{font-size:10px;color:var(--tx2);margin-top:2px}
+.chart{display:flex;align-items:flex-end;gap:7px;height:120px;padding:14px;background:#0a1120;border:1px solid var(--bd);border-radius:12px}
+.chart .bar{flex:1;border-radius:5px 5px 0 0;min-width:8px;position:relative;transition:height 1s var(--ease)}
+.chart .bar span{position:absolute;bottom:-18px;left:50%;transform:translateX(-50%);font-size:9px;color:var(--tx3);white-space:nowrap}
+
+/* challenges */
+.ch-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px}
+.chal{background:linear-gradient(165deg,var(--bg3),var(--bg2));border:1px solid var(--bd2);border-radius:18px;padding:18px;position:relative;overflow:hidden}
+.chal .glow{position:absolute;top:-40px;left:-40px;width:120px;height:120px;border-radius:50%;filter:blur(50px);opacity:.4}
+.chal .chh{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;position:relative}
+.chal .ci{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:21px}
+.chal .reward{font-family:var(--fl);font-size:12px;font-weight:700;padding:4px 10px;border-radius:20px}
+.chal h4{font-size:15px;margin-bottom:5px;position:relative}
+.chal p{font-size:12.5px;color:var(--tx2);margin-bottom:14px;position:relative}
+.pbar{height:7px;border-radius:5px;background:#0e1424;overflow:hidden}
+.pbar i{display:block;height:100%;border-radius:5px}
+.chal .pt{display:flex;justify-content:space-between;font-size:10px;color:var(--tx3);margin-top:6px}
+
+/* preview gallery */
+.gallery{display:grid;grid-template-columns:repeat(12,1fr);gap:14px}
+.shot{border-radius:18px;border:1px solid var(--bd2);background:linear-gradient(165deg,var(--bg3),#06090f);overflow:hidden;position:relative;min-height:200px;display:flex;flex-direction:column;transition:transform .35s var(--ease),border-color .35s}
+.shot:hover{transform:translateY(-6px);border-color:var(--bd3)}
+.shot .bar{height:30px;display:flex;align-items:center;gap:5px;padding:0 12px;border-bottom:1px solid var(--bd);background:#0a0e18}
+.shot .bar i{width:8px;height:8px;border-radius:50%;background:#1e2740}
+.shot .body{flex:1;padding:16px;display:flex;flex-direction:column;gap:10px}
+.shot .tag{position:absolute;top:40px;right:12px;font-family:var(--fl);font-size:10px;letter-spacing:1px;color:var(--tx3);text-transform:uppercase}
+.g-night{grid-column:span 7}.g-vote{grid-column:span 5}.g-role{grid-column:span 5}.g-win{grid-column:span 7}
+.mini-pl{display:grid;grid-template-columns:repeat(5,1fr);gap:7px}
+.mini-pl div{aspect-ratio:1;border-radius:9px;background:#121a2b;border:1px solid var(--bd);display:flex;align-items:center;justify-content:center;font-size:16px}
+.mini-vote{display:flex;flex-direction:column;gap:8px}
+.mvr{display:flex;align-items:center;gap:8px;font-size:11px}
+.mvr .mm{flex:1;height:6px;border-radius:4px;background:#0e1424;overflow:hidden}
+.mvr .mm i{display:block;height:100%;background:var(--red);border-radius:4px}
+.role-card{margin:auto;width:120px;height:160px;border-radius:14px;background:linear-gradient(160deg,#1a0a14,#0d0a1c);border:1px solid #8b5cf63a;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;box-shadow:0 20px 50px -20px #000}
+.win-hero{text-align:center;margin:auto}
+.win-hero .em{font-size:46px}
+
+/* how it works */
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;counter-reset:s}
+.step{position:relative;padding-top:22px}
+.step .num{font-family:var(--fl);font-size:54px;font-weight:700;line-height:1;color:transparent;-webkit-text-stroke:1.5px #2a3650;margin-bottom:14px}
+.step h4{font-size:17px;margin-bottom:8px}
+.step p{color:var(--tx2);font-size:13.5px}
+.step:not(:last-child)::after{content:'';position:absolute;top:42px;left:-9px;width:18px;height:2px;background:linear-gradient(90deg,#2a3650,transparent)}
+
+/* comparison */
+.compare{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:0;border:1px solid var(--bd2);border-radius:20px;overflow:hidden;background:var(--bg2)}
+.compare .ch{padding:22px 18px;text-align:center;border-bottom:1px solid var(--bd2)}
+.compare .ch.feat{text-align:right}
+.compare .col-us{background:linear-gradient(180deg,var(--redb),transparent)}
+.compare .ch.us-h{border-bottom:2px solid var(--red)}
+.compare .ch h4{font-size:15px}
+.compare .ch .sub{font-size:11px;color:var(--tx2);margin-top:3px;font-weight:400}
+.crow{display:contents}
+.ccell{padding:15px 18px;border-bottom:1px solid var(--bd);font-size:13.5px;display:flex;align-items:center;gap:8px;justify-content:center}
+.ccell.feat{justify-content:flex-start;font-weight:600;color:var(--tx)}
+.ccell.us{background:linear-gradient(180deg,var(--redb),transparent)}
+.yes{color:var(--grn)}.no{color:#4a5568}
+.tier-badge{position:absolute;top:-1px;right:50%;transform:translateX(50%);background:var(--red);color:#fff;font-family:var(--fl);font-size:10px;font-weight:700;padding:3px 12px;border-radius:0 0 8px 8px;letter-spacing:1px}
+
+/* testimonials */
+.tgrid{columns:3;column-gap:16px}
+.tcard{break-inside:avoid;margin-bottom:16px;background:linear-gradient(180deg,var(--bg3),var(--bg2));border:1px solid var(--bd2);border-radius:18px;padding:20px}
+.tcard .stars{color:var(--gold);font-size:13px;letter-spacing:2px;margin-bottom:10px}
+.tcard p{font-size:14px;line-height:1.7;color:var(--tx)}
+.tcard .who2{display:flex;align-items:center;gap:11px;margin-top:16px;padding-top:14px;border-top:1px solid var(--bd)}
+.tcard .who2 .av{width:40px;height:40px;border-radius:11px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:15px}
+.tcard .who2 .nm{font-weight:700;font-size:13px}
+.tcard .who2 .rk{font-size:11px;color:var(--gold);font-family:var(--fl)}
+
+/* faq */
+.faq{max-width:780px;margin:0 auto}
+.qa{border:1px solid var(--bd2);border-radius:15px;margin-bottom:12px;overflow:hidden;background:var(--bg3);transition:border-color .3s}
+.qa.open{border-color:var(--bd3)}
+.qa q{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:18px 20px;cursor:pointer;font-weight:600;font-size:15px;quotes:none;list-style:none}
+.qa q::-webkit-details-marker{display:none}
+.qa .ico{width:26px;height:26px;border-radius:8px;background:#ffffff0a;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:transform .3s,background .3s;font-size:16px;color:var(--red2)}
+.qa.open .ico{transform:rotate(45deg);background:var(--red);color:#fff}
+.qa .ans{max-height:0;overflow:hidden;transition:max-height .4s var(--ease)}
+.qa .ans p{padding:0 20px 18px;color:var(--tx2);font-size:14px;line-height:1.75}
+
+/* final cta */
+.finalcta{position:relative;border-radius:28px;overflow:hidden;padding:clamp(46px,7vw,80px) clamp(24px,5vw,64px);text-align:center;border:1px solid var(--bd2);background:linear-gradient(160deg,#140510,#0a0716)}
+.finalcta .glow{position:absolute;inset:0;background:radial-gradient(60% 80% at 50% 0%,#e8324a30,transparent 70%);pointer-events:none}
+.finalcta .glow2{position:absolute;inset:0;background:radial-gradient(50% 60% at 80% 100%,#8b5cf628,transparent 70%);pointer-events:none}
+
+/* footer */
+footer{border-top:1px solid var(--bd2);padding:60px 0 36px;margin-top:60px}
+.fgrid{display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;gap:36px;margin-bottom:42px}
+.fcol h5{font-size:13px;font-weight:700;margin-bottom:16px;color:var(--tx)}
+.fcol a{display:block;color:var(--tx2);font-size:13px;padding:5px 0;transition:color .2s}
+.fcol a:hover{color:var(--red2)}
+.fbottom{display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;padding-top:24px;border-top:1px solid var(--bd);color:var(--tx3);font-size:12px}
+.fsoc{display:flex;gap:10px}
+.fsoc a{width:36px;height:36px;border-radius:10px;border:1px solid var(--bd2);display:flex;align-items:center;justify-content:center;color:var(--tx2);transition:all .2s}
+.fsoc a:hover{border-color:var(--red);color:var(--red2);transform:translateY(-3px)}
+
+/* mobile */
+.mnav{position:fixed;inset:0;z-index:80;background:#04060cf2;backdrop-filter:blur(14px);display:none;flex-direction:column;align-items:center;justify-content:center;gap:8px}
+.mnav.open{display:flex}
+.mnav a{font-size:22px;font-weight:700;padding:12px;color:var(--tx2)}
+.mnav .close{position:absolute;top:22px;left:22px;width:44px;height:44px;border-radius:12px;border:1px solid var(--bd2);background:none;color:var(--tx);font-size:22px;cursor:pointer}
+
+@media(max-width:980px){
+  .hero-grid{grid-template-columns:1fr;gap:40px}
+  .mock{max-width:420px;margin:0 auto}
+  .split{grid-template-columns:1fr;gap:34px}
+  .split.rev{direction:rtl}
+  .steps{grid-template-columns:repeat(2,1fr)}
+  .step:not(:last-child)::after{display:none}
+  .compare{grid-template-columns:1fr .7fr .7fr;font-size:12px}
+  .tgrid{columns:2}
+  .fgrid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:680px){
+  .nlinks,.nav-cta .btn{display:none}
+  .burger{display:flex;align-items:center;justify-content:center}
+  .nav-cta .enter-sm{display:inline-flex}
+  .trust{gap:20px}
+  .steps{grid-template-columns:1fr}
+  .compare{grid-template-columns:1fr}
+  .compare .ch.feat,.ccell.feat{display:none}
+  .compare{grid-template-columns:1fr 1fr}
+  .gallery{grid-template-columns:1fr}
+  .g-night,.g-vote,.g-role,.g-win{grid-column:span 1}
+  .tgrid{columns:1}
+  .fgrid{grid-template-columns:1fr 1fr}
+  .h-xl{font-size:clamp(40px,13vw,60px)}
+}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.rv,.rv-s{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+
+<canvas id="bgcanvas"></canvas>
+<div class="mesh"><div class="blob r"></div><div class="blob p"></div><div class="blob g"></div></div>
+<div class="grain"></div>
+<div class="scan"></div>
+
+<!-- ══ NAV ══ -->
+<header id="hdr">
+  <nav class="nav">
+    <a href="#hero" class="logo" aria-label="مافیا AI">
+      <svg class="mk" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+        <defs>
+          <linearGradient id="lg" x1="0" y1="0" x2="64" y2="64">
+            <stop offset="0" stop-color="#ff5a6e"/><stop offset="1" stop-color="#c01f38"/>
+          </linearGradient>
+          <mask id="eyes"><rect width="64" height="64" fill="#fff"/>
+            <ellipse cx="23" cy="30" rx="6.5" ry="4.2" fill="#000" transform="rotate(-14 23 30)"/>
+            <ellipse cx="41" cy="30" rx="6.5" ry="4.2" fill="#000" transform="rotate(14 41 30)"/>
+          </mask>
+        </defs>
+        <path d="M8 24C18 17 25 17 32 23C39 17 46 17 56 24C56 38 45 47 32 47C19 47 8 38 8 24Z" fill="url(#lg)" mask="url(#eyes)" stroke="#ff5a6e" stroke-width="1" stroke-opacity=".4"/>
+      </svg>
+      <span class="wm">مافیا<b>.</b><span class="ai">AI</span></span>
+    </a>
+    <div class="nlinks">
+      <a href="#ai">گرداننده AI</a>
+      <a href="#tournament">تورنمنت</a>
+      <a href="#ranks">رنکینگ</a>
+      <a href="#how">چطور کار می‌کند</a>
+      <a href="#faq">سؤالات</a>
+    </div>
+    <div class="nav-cta">
+      <a href="#tournament" class="btn btn-ghost btn-sm">🏆 تورنمنت</a>
+      <a href="mafia-game.html" class="btn btn-p btn-sm enter-sm">ورود به بازی ←</a>
+    </div>
+    <button class="burger" onclick="document.getElementById('mnav').classList.add('open')" aria-label="منو">☰</button>
+  </nav>
+</header>
+
+<div class="mnav" id="mnav">
+  <button class="close" onclick="this.parentElement.classList.remove('open')" aria-label="بستن">✕</button>
+  <a href="#ai" onclick="closeM()">گرداننده AI</a>
+  <a href="#tournament" onclick="closeM()">تورنمنت</a>
+  <a href="#ranks" onclick="closeM()">رنکینگ</a>
+  <a href="#how" onclick="closeM()">چطور کار می‌کند</a>
+  <a href="#faq" onclick="closeM()">سؤالات</a>
+  <a href="mafia-game.html" class="btn btn-p btn-md" style="margin-top:14px">ورود به بازی ←</a>
+</div>
+
+<div class="wrap">
+
+<!-- ══ HERO ══ -->
+<section class="hero" id="hero">
+  <div class="cont">
+    <div class="hero-grid">
+      <div>
+        <div class="eyebrow rv"><span class="dot"></span>نسل تازهٔ بازی‌های استنتاج اجتماعی</div>
+        <h1 class="h-xl rv" style="--d:.08s">شهر هرگز<br><span class="grad">نمی‌خوابد.</span></h1>
+        <p class="lead rv" style="--d:.16s">اولین پلتفرم آنلاین مافیا با <b style="color:var(--tx)">گردانندهٔ هوش مصنوعی</b> — بدون نیاز به راوی انسانی. تورنمنت‌های زنده، رتبه‌بندی رقابتی، گفت‌وگوی صوتی و تحلیل حرفه‌ای هر بازی. هر دروغ شمرده می‌شود.</p>
+        <div class="hero-cta rv" style="--d:.24s">
+          <a href="mafia-game.html" class="btn btn-p btn-lg">▶ ورود به بازی</a>
+          <a href="#tournament" class="btn btn-ghost btn-lg">🏆 ثبت‌نام تورنمنت</a>
+        </div>
+        <div class="trust rv" style="--d:.32s">
+          <div><span class="n red latin" data-count="2847">۰</span><span class="l">بازیکن آنلاین</span></div>
+          <div><span class="n gold latin" data-count="1200" data-suffix="K+">۰</span><span class="l">بازی انجام‌شده</span></div>
+          <div><span class="n grn latin" data-count="98" data-suffix="٪">۰</span><span class="l">رضایت بازیکنان</span></div>
+          <div><span class="n latin" data-count="64" data-suffix="ms">۰</span><span class="l">تأخیر سرور</span></div>
+        </div>
+      </div>
+      <div class="mock rv-s" style="--d:.2s">
+        <div class="mock-card">
+          <div class="mc-top">
+            <span class="mc-phase">🌙 شب ۲</span>
+            <div class="mc-timer">۱۲</div>
+          </div>
+          <div class="mc-players">
+            <div class="mc-pl">😎<small>تو</small></div>
+            <div class="mc-pl sel">🙂<small>نازنین</small></div>
+            <div class="mc-pl">🙂<small>کاوه</small></div>
+            <div class="mc-pl dead">💀<small>رضا</small></div>
+            <div class="mc-pl">🙂<small>مینا</small></div>
+            <div class="mc-pl">🙂<small>سهیل</small></div>
+            <div class="mc-pl">🙂<small>لیلا</small></div>
+            <div class="mc-pl">🙂<small>آرش</small></div>
+          </div>
+          <div class="mc-nar">
+            <div class="mc-av">🎭</div>
+            <p><b>گرداننده:</b> شهر به خواب رفت. مافیا، هدفت را انتخاب کن... چشم‌ها بسته، نفس‌ها حبس.</p>
+          </div>
+        </div>
+        <div class="float-badge fb1"><div class="ic" style="background:var(--purb)">🤖</div><div><div class="fb-t">گردانندهٔ هوشمند</div><div class="fb-s">روایت زندهٔ بازی</div></div></div>
+        <div class="float-badge fb2"><div class="ic" style="background:var(--goldb)">⚡</div><div><div class="fb-t">ELO ۱٬۸۴۰</div><div class="fb-s">رتبهٔ بازرس</div></div></div>
+      </div>
+    </div>
+  </div>
+  <a href="#marquee" class="scrollcue"><span>SCROLL</span><span class="m"></span></a>
+</section>
+
+<!-- ══ MARQUEE ══ -->
+<div class="marquee" id="marquee">
+  <div class="mq-track" id="mqt">
+    <span>🏆 لیگ حرفه‌ای مافیا</span><span>★ منتخب هفتهٔ بازی‌سازان</span><span>🎙️ گفت‌وگوی صوتی زنده</span><span>🤖 گردانندهٔ هوش مصنوعی</span><span>⚔️ تورنمنت‌های روزانه</span><span>📊 تحلیل پس از بازی</span><span>🌐 بازی آنلاین ۲۴/۷</span>
+  </div>
+</div>
+
+<!-- ══ AI GAME MASTER ══ -->
+<section class="sec" id="ai">
+  <div class="cont">
+    <div class="split">
+      <div class="rv">
+        <div class="ftag" style="color:var(--pur)"><span class="sq" style="background:var(--purb)">🤖</span>گردانندهٔ هوش مصنوعی</div>
+        <h2 class="h-lg">راوی‌ای که<br>هرگز خسته نمی‌شود.</h2>
+        <p class="lead" style="margin-top:18px">دیگر لازم نیست یک نفر بیرون بازی بنشیند و فقط نقش راوی را بازی کند. گردانندهٔ AI ما بازی را روایت می‌کند، فازها را مدیریت می‌کند، اتهام‌ها را می‌فهمد و با لحنی سینمایی فضا را زنده نگه می‌دارد — کاملاً بی‌طرف، همیشه آماده.</p>
+        <div class="flist">
+          <div class="fli"><span class="ck">✓</span><div><b>روایت سینمایی زنده</b><p>هر شب و روز با توصیف‌های پویا و منحصربه‌فرد روایت می‌شود.</p></div></div>
+          <div class="fli"><span class="ck">✓</span><div><b>داوری کاملاً بی‌طرف</b><p>قوانین بدون خطا و بدون جانب‌داری اجرا می‌شوند.</p></div></div>
+          <div class="fli"><span class="ck">✓</span><div><b>ربات‌های هوشمند</b><p>صندلی‌های خالی با بازیکنان AI با شخصیت‌های متفاوت پر می‌شوند.</p></div></div>
+        </div>
+      </div>
+      <div class="card card-glow ai-mock rv-s" style="--d:.1s">
+        <div class="chat">
+          <div class="cmsg gm"><div class="ava">🎭</div><div class="bub"><span class="who">گرداننده</span>سپیده دمید. جسد <b>رضا</b> در میدان شهر پیدا شد — او دیشب قربانی مافیا شد.</div></div>
+          <div class="cmsg pl"><div class="ava">ک</div><div class="bub"><span class="who" style="color:var(--blue)">کاوه</span>من به نازنین مشکوکم، دیشب خیلی ساکت بود.</div></div>
+          <div class="cmsg pl"><div class="ava">ن</div><div class="bub"><span class="who" style="color:var(--grn)">نازنین</span>این یه حرکت کلاسیک مافیاست که توجه رو منحرف کنه!</div></div>
+          <div class="cmsg gm"><div class="ava">🎭</div><div class="bub"><span class="who">تحلیل گرداننده</span>الگوی رأی‌ها نشان می‌دهد ائتلافی در حال شکل‌گیری است. زمان رأی‌گیری فرا رسیده...</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ TOURNAMENT ══ -->
+<section class="sec" id="tournament" style="background:linear-gradient(180deg,transparent,#f5b3240a,transparent)">
+  <div class="cont">
+    <div class="sec-head rv">
+      <div class="eyebrow" style="color:var(--gold);margin-bottom:18px"><span class="dot"></span>سیستم تورنمنت</div>
+      <h2 class="h-lg">به <span class="grad-g">صدر</span> راه پیدا کن.</h2>
+      <p class="lead" style="margin-top:16px">براکت‌های حذفی زنده با ده‌ها بازیکن. از یک‌چهارم تا فینال بجنگ، جوایز فصلی ببر و نامت را در تالار قهرمانان ثبت کن.</p>
+    </div>
+    <div class="card rv-s" style="padding:28px 20px">
+      <div class="bracket">
+        <div class="bcol"><span class="lbl">یک‌چهارم</span>
+          <div class="match"><div class="row w"><span>👑</span>یونا ک.</div><div class="row l"><span>💀</span>مارکوس</div></div>
+          <div class="match"><div class="row w"><span>👑</span>آیشا ر.</div><div class="row l"><span>💀</span>دِو پ.</div></div>
+          <div class="match"><div class="row w"><span>👑</span>کایتو م.</div><div class="row l"><span>💀</span>سوفیا</div></div>
+          <div class="match"><div class="row w"><span>👑</span>فلیکس ه.</div><div class="row l"><span>💀</span>زوئی</div></div>
+        </div>
+        <div class="bcol"><span class="lbl">نیمه‌نهایی</span>
+          <div class="match"><div class="row w"><span>👑</span>یونا ک.</div><div class="row l"><span>💀</span>آیشا ر.</div></div>
+          <div class="match"><div class="row w"><span>👑</span>کایتو م.</div><div class="row l"><span>💀</span>فلیکس ه.</div></div>
+        </div>
+        <div class="bcol"><span class="lbl">فینال</span>
+          <div class="match final"><div class="row"><span>⚡</span>یونا ک.</div><div class="row"><span>⚡</span>کایتو م.</div></div>
+        </div>
+        <div class="bcol"><span class="lbl">قهرمان</span>
+          <div class="champ">🏆<br>قهرمان فصل</div>
+        </div>
+      </div>
+      <div class="prize">
+        <div class="p"><div class="pl">جایزهٔ قهرمانی</div><div class="pn grad-g">۵۰۰ XP</div></div>
+        <div class="p"><div class="pl">شرکت‌کنندگان</div><div class="pn latin">۳۲</div></div>
+        <div class="p"><div class="pl">تورنمنت بعدی</div><div class="pn" style="color:var(--gold);font-size:18px;padding-top:6px">فردا ۲۰:۰۰</div></div>
+      </div>
+      <div style="text-align:center;margin-top:26px"><a href="mafia-game.html?screen=tournament" class="btn btn-gold btn-md">🏆 ثبت‌نام در تورنمنت</a></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ RANKS & ACHIEVEMENTS ══ -->
+<section class="sec" id="ranks">
+  <div class="cont">
+    <div class="split">
+      <div class="card rv-s" style="padding:22px">
+        <div class="ranks">
+          <div class="rank"><div class="em">🥉</div><div><div class="nm">تازه‌کار</div><div class="el">۰ – ۸۰۰ ELO</div></div><div class="badge" style="color:#cd7f32">برنز</div></div>
+          <div class="rank"><div class="em">🥈</div><div><div class="nm">شهروند</div><div class="el">۸۰۰ – ۱٬۴۰۰ ELO</div></div><div class="badge" style="color:#c0c8d4">نقره</div></div>
+          <div class="rank me"><div class="em">🕵️</div><div><div class="nm">بازرس <span style="font-size:11px;color:var(--red2)">· رتبهٔ تو</span></div><div class="el">۱٬۸۴۰ ELO</div></div><div class="badge" style="color:var(--gold)">طلا</div></div>
+          <div class="rank"><div class="em">🎯</div><div><div class="nm">کارآگاه ارشد</div><div class="el">۲٬۰۰۰ – ۲٬۶۰۰ ELO</div></div><div class="badge" style="color:#5fd3ff">پلاتین</div></div>
+          <div class="rank"><div class="em">👑</div><div><div class="nm">پدرخوانده</div><div class="el">۲٬۶۰۰+ ELO</div></div><div class="badge grad">افسانه</div></div>
+        </div>
+      </div>
+      <div class="rv">
+        <div class="ftag" style="color:var(--gold)"><span class="sq" style="background:var(--goldb)">🏅</span>رتبه‌بندی و دستاوردها</div>
+        <h2 class="h-lg">هر بازی،<br>یک پله بالاتر.</h2>
+        <p class="lead" style="margin-top:18px">سیستم ELO رقابتی، نشان‌های فصلی و ده‌ها دستاورد قابل‌بازگشایی. مهارتت دیده می‌شود، رشد می‌کنی و در نردبان جهانی بالا می‌روی.</p>
+        <div class="ach-grid">
+          <div class="achv un"><div class="ai-ic">🏆</div><div class="at">اولین پیروزی</div><div class="ad">اولین بازی را ببر</div><div class="xp">+۵۰ XP</div></div>
+          <div class="achv un"><div class="ai-ic">🕵️</div><div class="at">کارآگاه استاد</div><div class="ad">۳ مافیا در یک بازی</div><div class="xp">+۱۵۰ XP</div></div>
+          <div class="achv"><div class="ai-ic" style="opacity:.4">🎭</div><div class="at" style="color:var(--tx2)">افسانهٔ مافیا</div><div class="ad">۱۰ برد به‌عنوان مافیا</div><div class="xp" style="color:var(--tx3)">۶/۱۰</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ VOICE ══ -->
+<section class="sec" id="voice" style="background:linear-gradient(180deg,transparent,#16d1960a,transparent)">
+  <div class="cont">
+    <div class="split rev">
+      <div class="rv">
+        <div class="ftag" style="color:var(--grn)"><span class="sq" style="background:#16d19618">🎙️</span>گفت‌وگوی صوتی</div>
+        <h2 class="h-lg">بلوف بزن.<br>متهم کن. دفاع کن.</h2>
+        <p class="lead" style="margin-top:18px">قلب مافیا گفت‌وگوست. کانال صوتی زندهٔ کم‌تأخیر با کیفیت کریستالی، نشانگر گویندهٔ فعال و قطع خودکار صدای بازیکنان حذف‌شده — تا فریب و اقناع همان‌طور که باید، شکل بگیرد.</p>
+        <div class="flist">
+          <div class="fli"><span class="ck" style="background:#16d19618;color:var(--grn)">✓</span><div><b>صدای کم‌تأخیر HD</b><p>زیر ۶۴ میلی‌ثانیه، بدون قطعی و اکو.</p></div></div>
+          <div class="fli"><span class="ck" style="background:#16d19618;color:var(--grn)">✓</span><div><b>مدیریت هوشمند نوبت</b><p>گرداننده در فاز شب میکروفون‌ها را مدیریت می‌کند.</p></div></div>
+        </div>
+      </div>
+      <div class="card card-glow voice-panel rv-s">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px"><div style="font-family:var(--fl);font-size:12px;letter-spacing:1px;color:var(--tx2)">🔊 کانال صوتی · فاز روز</div><div style="font-size:11px;color:var(--grn);display:flex;align-items:center;gap:6px"><span class="dot" style="background:var(--grn);box-shadow:0 0 8px var(--grn)"></span>زنده</div></div>
+        <div class="vrow2 speak"><div class="va">ن</div><div class="vn">نازنین<div class="vr">در حال صحبت</div></div><div class="wave"><span></span><span></span><span></span><span></span><span></span></div></div>
+        <div class="vrow2"><div class="va">ک</div><div class="vn">کاوه<div class="vr">شهروند</div></div><span class="muted">🎙️</span></div>
+        <div class="vrow2 speak"><div class="va" style="background:linear-gradient(135deg,var(--red),var(--pur))">😎</div><div class="vn">تو<div class="vr">بازرس</div></div><div class="wave"><span></span><span></span><span></span><span></span><span></span></div></div>
+        <div class="vrow2"><div class="va">س</div><div class="vn">سهیل<div class="vr">دکتر</div></div><span class="muted">🔇</span></div>
+        <div class="vrow2" style="opacity:.45"><div class="va" style="background:#1a2336">💀</div><div class="vn">رضا<div class="vr">حذف‌شده</div></div><span class="muted">قطع</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ AI ANALYSIS ══ -->
+<section class="sec" id="analysis">
+  <div class="cont">
+    <div class="split">
+      <div class="card card-glow an-mock rv-s">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px"><span style="color:var(--pur)">🤖</span><b style="font-size:14px">تحلیل پس از بازی</b></div>
+        <div class="an-stats">
+          <div class="an-stat"><div class="v" style="color:var(--gold)">MVP</div><div class="k">نازنین</div></div>
+          <div class="an-stat"><div class="v latin">۸۴٪</div><div class="k">دقت رأی تو</div></div>
+          <div class="an-stat"><div class="v latin" style="color:var(--red2)">۳</div><div class="k">دور بلوف</div></div>
+        </div>
+        <div class="chart" id="anChart">
+          <div class="bar" style="background:var(--blue);height:40%"><span>تو</span></div>
+          <div class="bar" style="background:var(--red);height:85%"><span>نازنین</span></div>
+          <div class="bar" style="background:var(--blue);height:55%"><span>کاوه</span></div>
+          <div class="bar" style="background:var(--red);height:70%"><span>سهیل</span></div>
+          <div class="bar" style="background:var(--blue);height:30%"><span>مینا</span></div>
+          <div class="bar" style="background:var(--blue);height:48%"><span>آرش</span></div>
+        </div>
+        <p style="font-size:11px;color:var(--tx3);margin-top:26px;text-align:center">نمودار سطح مظنون‌بودن هر بازیکن در طول بازی</p>
+      </div>
+      <div class="rv">
+        <div class="ftag" style="color:var(--pur)"><span class="sq" style="background:var(--purb)">📊</span>تحلیل هوشمند بازی</div>
+        <h2 class="h-lg">بعد از هر بازی،<br>بهتر شو.</h2>
+        <p class="lead" style="margin-top:18px">گردانندهٔ AI کل بازی را بازخوانی می‌کند: بهترین بازیکن، بزرگ‌ترین بلوف، نقاط عطف رأی‌گیری و اشتباهات کلیدی. دقیقاً می‌فهمی کجا فریب خوردی و دفعهٔ بعد چطور برنده شوی.</p>
+        <div class="flist">
+          <div class="fli"><span class="ck" style="background:var(--purb);color:var(--pur)">✓</span><div><b>انتخاب MVP و بهترین بلوف</b><p>درخشان‌ترین لحظات هر مسابقه مشخص می‌شود.</p></div></div>
+          <div class="fli"><span class="ck" style="background:var(--purb);color:var(--pur)">✓</span><div><b>نمودار مظنون‌بودن</b><p>ببین اعتماد شهر در طول بازی چطور جابه‌جا شد.</p></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ DAILY CHALLENGES ══ -->
+<section class="sec" id="challenges">
+  <div class="cont">
+    <div class="sec-head rv">
+      <div class="eyebrow" style="color:var(--blue);border-color:#3b82f622;margin-bottom:18px"><span class="dot" style="background:var(--blue);box-shadow:0 0 8px var(--blue)"></span>چالش‌های روزانه</div>
+      <h2 class="h-lg">هر روز، یک <span class="grad">مأموریت تازه.</span></h2>
+      <p class="lead" style="margin-top:16px">دلیلی برای بازگشت هر روز. چالش‌ها را کامل کن، XP بگیر و سری‌ات (streak) را نشکن.</p>
+    </div>
+    <div class="ch-grid">
+      <div class="chal rv-s" style="--d:0s"><div class="glow" style="background:var(--red)"></div>
+        <div class="chh"><div class="ci" style="background:var(--redb)">🔫</div><span class="reward" style="background:var(--redb);color:var(--red2)">+۵۰ XP</span></div>
+        <h4>سه‌گانهٔ مافیا</h4><p>در ۳ بازی متوالی به‌عنوان مافیا برنده شو.</p>
+        <div class="pbar"><i style="width:33%;background:var(--red)"></i></div><div class="pt"><span>۱ از ۳</span><span>۸ ساعت مانده</span></div>
+      </div>
+      <div class="chal rv-s" style="--d:.1s"><div class="glow" style="background:var(--blue)"></div>
+        <div class="chh"><div class="ci" style="background:#3b82f618">🔍</div><span class="reward" style="background:#3b82f618;color:var(--blue)">+۸۰ XP</span></div>
+        <h4>چشم تیزبین</h4><p>۵ مافیا را در نقش کارآگاه شناسایی کن.</p>
+        <div class="pbar"><i style="width:60%;background:var(--blue)"></i></div><div class="pt"><span>۳ از ۵</span><span>۸ ساعت مانده</span></div>
+      </div>
+      <div class="chal rv-s" style="--d:.2s"><div class="glow" style="background:var(--grn)"></div>
+        <div class="chh"><div class="ci" style="background:#16d19618">💉</div><span class="reward" style="background:#16d19618;color:var(--grn)">+۶۰ XP</span></div>
+        <h4>فرشتهٔ نجات</h4><p>۴ بار با نقش دکتر جان کسی را نجات بده.</p>
+        <div class="pbar"><i style="width:75%;background:var(--grn)"></i></div><div class="pt"><span>۳ از ۴</span><span>۸ ساعت مانده</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ GAMEPLAY PREVIEW ══ -->
+<section class="sec" id="preview" style="background:linear-gradient(180deg,transparent,#0a0e18,transparent)">
+  <div class="cont">
+    <div class="sec-head rv">
+      <div class="kicker" style="margin-bottom:14px">PREVIEW</div>
+      <h2 class="h-lg">نگاهی به درون بازی.</h2>
+      <p class="lead" style="margin-top:16px">رابط کاربری تاریک و سینمایی، طراحی‌شده برای تمرکز کامل روی بازی و بازیکنان.</p>
+    </div>
+    <div class="gallery">
+      <div class="shot g-night rv-s">
+        <div class="bar"><i></i><i></i><i></i></div><span class="tag">فاز شب</span>
+        <div class="body">
+          <div class="mc-nar" style="margin-bottom:4px"><div class="mc-av">🎭</div><p style="font-size:11px"><b>شب فرا رسید.</b> شهر به خواب می‌رود... نقش‌ها بیدار شوید.</p></div>
+          <div class="mini-pl"><div>😎</div><div style="border-color:var(--red);background:var(--redb)">🔫</div><div>🙂</div><div>🙂</div><div>🙂</div><div>🙂</div><div style="opacity:.3">💀</div><div>🙂</div><div>🙂</div><div>🙂</div></div>
+        </div>
+      </div>
+      <div class="shot g-vote rv-s" style="--d:.08s">
+        <div class="bar"><i></i><i></i><i></i></div><span class="tag">رأی‌گیری زنده</span>
+        <div class="body" style="justify-content:center">
+          <div class="mini-vote">
+            <div class="mvr"><span style="width:48px">نازنین</span><div class="mm"><i style="width:80%"></i></div><b>۴</b></div>
+            <div class="mvr"><span style="width:48px">کاوه</span><div class="mm"><i style="width:40%"></i></div><b>۲</b></div>
+            <div class="mvr"><span style="width:48px">سهیل</span><div class="mm"><i style="width:20%"></i></div><b>۱</b></div>
+          </div>
+        </div>
+      </div>
+      <div class="shot g-role rv-s" style="--d:.12s">
+        <div class="bar"><i></i><i></i><i></i></div><span class="tag">نقش مخفی</span>
+        <div class="body">
+          <div class="role-card"><div style="font-size:34px">🔍</div><div style="font-weight:800;color:var(--blue)">کارآگاه</div><div style="font-size:10px;color:var(--tx2);text-align:center;padding:0 10px">هر شب هویت یک نفر را بررسی کن</div></div>
+        </div>
+      </div>
+      <div class="shot g-win rv-s" style="--d:.16s">
+        <div class="bar"><i></i><i></i><i></i></div><span class="tag">پایان بازی</span>
+        <div class="body">
+          <div class="win-hero"><div class="em">🏙️</div><div style="font-weight:900;font-size:22px;margin-top:6px">شهروندان بردند!</div><div style="font-size:12px;color:var(--tx2);margin-top:4px">تمام مافیاها شناسایی شدند</div>
+            <div style="display:flex;gap:10px;justify-content:center;margin-top:14px"><div class="an-stat" style="padding:8px 14px"><div class="v latin">۴</div><div class="k">دور</div></div><div class="an-stat" style="padding:8px 14px"><div class="v latin" style="color:var(--grn)">۵</div><div class="k">بازمانده</div></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ HOW IT WORKS ══ -->
+<section class="sec" id="how">
+  <div class="cont">
+    <div class="sec-head rv">
+      <div class="kicker" style="margin-bottom:14px">HOW IT WORKS</div>
+      <h2 class="h-lg">از صفر تا اولین بازی،<br>کمتر از یک دقیقه.</h2>
+    </div>
+    <div class="steps">
+      <div class="step rv" style="--d:0s"><div class="num">۰۱</div><h4>وارد شو</h4><p>بدون نصب و دردسر؛ مستقیم در مرورگر شروع کن یا به اتاق دوستانت بپیوند.</p></div>
+      <div class="step rv" style="--d:.1s"><div class="num">۰۲</div><h4>نقشت را بگیر</h4><p>گردانندهٔ AI به‌صورت مخفیانه نقشت را تعیین می‌کند: مافیا، کارآگاه، دکتر یا شهروند.</p></div>
+      <div class="step rv" style="--d:.2s"><div class="num">۰۳</div><h4>بازی کن</h4><p>در شب اقدام کن، در روز بحث و رأی‌گیری کن. فریب بده یا فریب را بشکن.</p></div>
+      <div class="step rv" style="--d:.3s"><div class="num">۰۴</div><h4>بالا برو</h4><p>ببر، ELO بگیر، دستاورد باز کن و در تورنمنت‌ها به صدر برس.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ COMPARISON ══ -->
+<section class="sec" id="compare" style="background:linear-gradient(180deg,transparent,#e8324a08,transparent)">
+  <div class="cont">
+    <div class="sec-head rv">
+      <div class="kicker" style="margin-bottom:14px">چرا متفاوت است</div>
+      <h2 class="h-lg">مافیا، آن‌طور که<br>باید باشد.</h2>
+    </div>
+    <div class="compare rv-s">
+      <div class="ch feat">امکانات</div>
+      <div class="ch col-us us-h" style="position:relative"><span class="tier-badge">پلتفرم ما</span><h4 style="color:var(--red2)">مافیا AI</h4><div class="sub">آنلاین · هوشمند</div></div>
+      <div class="ch"><h4>روش سنتی</h4><div class="sub">دورهمی حضوری</div></div>
+
+      <div class="ccell feat">گردانندهٔ بازی</div>
+      <div class="ccell us"><span class="yes">✓</span> هوش مصنوعی بی‌طرف</div>
+      <div class="ccell"><span class="no">✕</span> یک نفر باید بسوزد</div>
+
+      <div class="ccell feat">دسترسی</div>
+      <div class="ccell us"><span class="yes">✓</span> آنلاین ۲۴/۷</div>
+      <div class="ccell"><span class="no">✕</span> نیاز به جمع حضوری</div>
+
+      <div class="ccell feat">رتبه‌بندی و آمار</div>
+      <div class="ccell us"><span class="yes">✓</span> ELO + تحلیل کامل</div>
+      <div class="ccell"><span class="no">✕</span> هیچ سابقه‌ای نیست</div>
+
+      <div class="ccell feat">تورنمنت رقابتی</div>
+      <div class="ccell us"><span class="yes">✓</span> براکت زنده + جوایز</div>
+      <div class="ccell"><span class="no">✕</span> غیرممکن</div>
+
+      <div class="ccell feat" style="border:none">گفت‌وگوی صوتی</div>
+      <div class="ccell us" style="border:none"><span class="yes">✓</span> HD کم‌تأخیر</div>
+      <div class="ccell" style="border:none"><span class="yes" style="color:var(--tx3)">~</span> فقط حضوری</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ TESTIMONIALS ══ -->
+<section class="sec" id="testimonials">
+  <div class="cont">
+    <div class="sec-head rv">
+      <div class="kicker" style="margin-bottom:14px">نظر بازیکنان</div>
+      <h2 class="h-lg">شهر دارد <span class="grad">حرف می‌زند.</span></h2>
+    </div>
+    <div class="tgrid">
+      <div class="tcard rv-s"><div class="stars">★★★★★</div><p>«گردانندهٔ AI واقعاً غافلگیرم کرد. روایت‌هاش انگار توی یه فیلم نوآر نشستی. دیگه هیچ‌وقت به نسخهٔ دورهمی برنمی‌گردم.»</p><div class="who2"><div class="av" style="background:linear-gradient(135deg,var(--red),var(--pur))">آ</div><div><div class="nm">آرمین دلاور</div><div class="rk">🕵️ بازرس · ELO ۱٬۹۲۰</div></div></div></div>
+      <div class="tcard rv-s"><div class="stars">★★★★★</div><p>«تورنمنت‌ها اعتیادآورن. فضای رقابت و استرس فینال رو دقیقاً مثل یه مسابقهٔ ای‌اسپورت واقعی منتقل می‌کنه.»</p><div class="who2"><div class="av" style="background:linear-gradient(135deg,var(--gold),var(--red))">س</div><div><div class="nm">سحر کیانی</div><div class="rk">🎯 کارآگاه ارشد · ELO ۲٬۲۱۰</div></div></div></div>
+      <div class="tcard rv-s"><div class="stars">★★★★★</div><p>«تحلیل پس از بازی نقطهٔ قوتشه. فهمیدم چرا همیشه روز دوم لو می‌رفتم. دو هفته‌ای نرخ بردم دو برابر شد.»</p><div class="who2"><div class="av" style="background:linear-gradient(135deg,var(--blue),var(--grn))">ر</div><div><div class="nm">رها موسوی</div><div class="rk">🥈 شهروند · ELO ۱٬۳۴۰</div></div></div></div>
+      <div class="tcard rv-s"><div class="stars">★★★★★</div><p>«کیفیت صدا فوق‌العاده‌ست. بلوف زدن و قانع کردن بقیه با صدای واقعی، حس بازی رو کاملاً عوض می‌کنه.»</p><div class="who2"><div class="av" style="background:linear-gradient(135deg,var(--pur),var(--blue))">ک</div><div><div class="nm">کیان رستمی</div><div class="rk">👑 پدرخوانده · ELO ۲٬۷۰۰</div></div></div></div>
+      <div class="tcard rv-s"><div class="stars">★★★★★</div><p>«وقتی دوستام آنلاین نیستن، ربات‌های AI جاشون رو پر می‌کنن و واقعاً باهوشن. هر ساعت از شبانه‌روز می‌تونم بازی کنم.»</p><div class="who2"><div class="av" style="background:linear-gradient(135deg,var(--red),var(--gold))">م</div><div><div class="nm">مونا اسدی</div><div class="rk">🥈 شهروند · ELO ۱٬۵۸۰</div></div></div></div>
+      <div class="tcard rv-s"><div class="stars">★★★★★</div><p>«به‌عنوان کسی که سال‌ها مافیا گردوندم، اولش شک داشتم. ولی این AI از خیلی از راوی‌های انسانی منصف‌تر و سریع‌تره.»</p><div class="who2"><div class="av" style="background:linear-gradient(135deg,var(--grn),var(--blue))">ب</div><div><div class="nm">بردیا نیک‌پور</div><div class="rk">🎯 کارآگاه ارشد · ELO ۲٬۰۵۰</div></div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ FAQ ══ -->
+<section class="sec" id="faq">
+  <div class="cont">
+    <div class="sec-head rv">
+      <div class="kicker" style="margin-bottom:14px">FAQ</div>
+      <h2 class="h-lg">سؤالی داری؟</h2>
+    </div>
+    <div class="faq">
+      <div class="qa rv"><q onclick="toggleQA(this)">مافیا چه بازی‌ای است؟<span class="ico">+</span></q><div class="ans"><p>مافیا یک بازی استنتاج اجتماعی است: گروهی پنهان از «مافیا» شبانه شهروندان را حذف می‌کنند و شهروندان باید با بحث، منطق و رأی‌گیری در روز، مافیاها را شناسایی و حذف کنند. ترکیبی از روان‌شناسی، بلوف و کارآگاه‌بازی.</p></div></div>
+      <div class="qa rv"><q onclick="toggleQA(this)">گردانندهٔ هوش مصنوعی دقیقاً چه می‌کند؟<span class="ico">+</span></q><div class="ans"><p>گردانندهٔ AI نقش راوی و داور بازی را برعهده می‌گیرد: نقش‌ها را مخفیانه پخش می‌کند، فازهای شب و روز را مدیریت می‌کند، رویدادها را با لحنی سینمایی روایت می‌کند و قوانین را بدون خطا و کاملاً بی‌طرف اجرا می‌کند — بدون اینکه کسی مجبور باشد بیرون بازی بنشیند.</p></div></div>
+      <div class="qa rv"><q onclick="toggleQA(this)">برای بازی به نصب چیزی نیاز دارم؟<span class="ico">+</span></q><div class="ans"><p>خیر. بازی مستقیماً در مرورگر اجرا می‌شود؛ روی موبایل و دسکتاپ. کافی است روی «ورود به بازی» بزنی.</p></div></div>
+      <div class="qa rv"><q onclick="toggleQA(this)">اگر دوستانم آنلاین نباشند چه؟<span class="ico">+</span></q><div class="ans"><p>صندلی‌های خالی با بازیکنان هوش مصنوعی پر می‌شوند که هرکدام شخصیت و سبک بازی متفاوتی دارند. در نتیجه در هر ساعت از شبانه‌روز می‌توانی یک بازی کامل را تجربه کنی.</p></div></div>
+      <div class="qa rv"><q onclick="toggleQA(this)">سیستم رتبه‌بندی چطور کار می‌کند؟<span class="ico">+</span></q><div class="ans"><p>هر بازیکن یک امتیاز ELO دارد که با برد و باخت تغییر می‌کند. با بالا رفتن ELO در رتبه‌های برنز تا افسانه (پدرخوانده) ارتقا می‌یابی و در جدول رده‌بندی جهانی و فصلی دیده می‌شوی.</p></div></div>
+      <div class="qa rv"><q onclick="toggleQA(this)">بازی رایگان است؟<span class="ico">+</span></q><div class="ans"><p>بله، شروع بازی کاملاً رایگان است. می‌توانی همین حالا وارد شوی، بازی کنی و در تورنمنت‌های پایه شرکت کنی.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ FINAL CTA ══ -->
+<section class="sec" style="padding-top:20px">
+  <div class="cont">
+    <div class="finalcta rv-s">
+      <div class="glow"></div><div class="glow2"></div>
+      <div style="position:relative">
+        <div style="font-size:46px;margin-bottom:14px">🎭</div>
+        <h2 class="h-lg" style="max-width:680px;margin:0 auto">شهر منتظر توست.<br><span class="grad">چه کسی را باور می‌کنی؟</span></h2>
+        <p class="lead" style="max-width:520px;margin:18px auto 0">به هزاران بازیکن بپیوند. نقشت را بگیر، بلوف بزن و ثابت کن باهوش‌ترین فرد شهری.</p>
+        <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:30px">
+          <a href="mafia-game.html" class="btn btn-p btn-lg">▶ ورود به بازی</a>
+          <a href="mafia-game.html?screen=tournament" class="btn btn-gold btn-lg">🏆 ثبت‌نام تورنمنت</a>
+        </div>
+        <p style="font-size:12px;color:var(--tx3);margin-top:18px">رایگان · بدون نصب · در مرورگر</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ FOOTER ══ -->
+<footer>
+  <div class="cont">
+    <div class="fgrid">
+      <div class="fcol">
+        <div class="logo" style="margin-bottom:14px">
+          <svg class="mk" viewBox="0 0 64 64" fill="none" aria-hidden="true"><path d="M8 24C18 17 25 17 32 23C39 17 46 17 56 24C56 38 45 47 32 47C19 47 8 38 8 24Z" fill="url(#lg)" mask="url(#eyes)"/></svg>
+          <span class="wm">مافیا<b>.</b><span class="ai">AI</span></span>
+        </div>
+        <p style="color:var(--tx2);font-size:13px;max-width:280px">پلتفرم آنلاین بازی مافیا با گردانندهٔ هوش مصنوعی. شهر هرگز نمی‌خوابد.</p>
+      </div>
+      <div class="fcol"><h5>محصول</h5><a href="#ai">گردانندهٔ AI</a><a href="#tournament">تورنمنت</a><a href="#ranks">رنکینگ</a><a href="#challenges">چالش‌ها</a></div>
+      <div class="fcol"><h5>پلتفرم</h5><a href="#how">چطور کار می‌کند</a><a href="#compare">مقایسه</a><a href="#faq">سؤالات متداول</a><a href="mafia-game.html">ورود به بازی</a></div>
+      <div class="fcol"><h5>جامعه</h5><a href="#testimonials">نظر بازیکنان</a><a href="#">دیسکورد</a><a href="#">قوانین</a><a href="#">پشتیبانی</a></div>
+    </div>
+    <div class="fbottom">
+      <div>© ۱۴۰۴ مافیا AI — تمامی حقوق محفوظ است.</div>
+      <div class="fsoc">
+        <a href="#" aria-label="اینستاگرام">◎</a>
+        <a href="#" aria-label="تلگرام">✈</a>
+        <a href="#" aria-label="دیسکورد">◈</a>
+        <a href="#" aria-label="یوتیوب">▶</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</div><!-- /wrap -->
+
+<script>
+/* particle network */
+(function(){
+  const c=document.getElementById('bgcanvas'),x=c.getContext('2d');let p=[];
+  function init(){c.width=innerWidth;c.height=innerHeight;const n=Math.min(70,Math.floor(innerWidth/22));p=Array.from({length:n},()=>({x:Math.random()*c.width,y:Math.random()*c.height,vx:(Math.random()-.5)*.25,vy:(Math.random()-.5)*.25,r:Math.random()*1.1+.3,col:Math.random()>.5?'232,50,74':'139,92,246',a:Math.random()*.3+.08}))}
+  init();addEventListener('resize',init);
+  (function loop(){x.clearRect(0,0,c.width,c.height);for(const a of p){a.x=(a.x+a.vx+c.width)%c.width;a.y=(a.y+a.vy+c.height)%c.height;x.beginPath();x.arc(a.x,a.y,a.r,0,6.283);x.fillStyle=`rgba(${a.col},${a.a})`;x.fill()}for(let i=0;i<p.length;i++)for(let j=i+1;j<p.length;j++){const d=Math.hypot(p[i].x-p[j].x,p[i].y-p[j].y);if(d<120){x.beginPath();x.moveTo(p[i].x,p[i].y);x.lineTo(p[j].x,p[j].y);x.strokeStyle=`rgba(${p[i].col},${.08*(1-d/120)})`;x.lineWidth=.5;x.stroke()}}requestAnimationFrame(loop)})();
+})();
+
+/* sticky header */
+const hdr=document.getElementById('hdr');
+addEventListener('scroll',()=>hdr.classList.toggle('scrolled',scrollY>30),{passive:true});
+
+/* scroll reveal */
+const io=new IntersectionObserver((es)=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{threshold:.12,rootMargin:'0px 0px -8% 0px'});
+document.querySelectorAll('.rv,.rv-s').forEach(el=>io.observe(el));
+
+/* count-up stats */
+const faD=n=>String(n).replace(/[0-9]/g,d=>'۰۱۲۳۴۵۶۷۸۹'[d]);
+const cio=new IntersectionObserver((es)=>{es.forEach(e=>{if(!e.isIntersecting)return;cio.unobserve(e.target);
+  const el=e.target,t=+el.dataset.count,suf=el.dataset.suffix||'',dur=1500,t0=performance.now();
+  function tick(now){const p=Math.min(1,(now-t0)/dur);const ease=1-Math.pow(1-p,3);const v=Math.round(t*ease);
+    el.textContent=faD(v.toLocaleString('en-US'))+(p===1?suf:'');if(p<1)requestAnimationFrame(tick)}
+  requestAnimationFrame(tick);
+})},{threshold:.5});
+document.querySelectorAll('[data-count]').forEach(el=>cio.observe(el));
+
+/* FAQ accordion */
+function toggleQA(q){const qa=q.parentElement,ans=q.nextElementSibling,open=qa.classList.contains('open');
+  document.querySelectorAll('.qa.open').forEach(o=>{o.classList.remove('open');o.querySelector('.ans').style.maxHeight=null});
+  if(!open){qa.classList.add('open');ans.style.maxHeight=ans.scrollHeight+'px'}}
+
+/* mobile nav */
+function closeM(){document.getElementById('mnav').classList.remove('open')}
+
+/* marquee duplicate for seamless loop */
+(function(){const t=document.getElementById('mqt');t.innerHTML+=t.innerHTML})();
+</script>
+</body>
+</html>

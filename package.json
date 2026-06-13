@@ -1,0 +1,11 @@
+{
+  "name": "mafia-ai",
+  "version": "1.0.0",
+  "private": false,
+  "description": "AI-powered online Mafia platform — landing page + game, Supabase leaderboard, Vercel-ready.",
+  "license": "MIT",
+  "scripts": {
+    "dev": "npx serve .",
+    "start": "npx serve ."
+  }
+}
