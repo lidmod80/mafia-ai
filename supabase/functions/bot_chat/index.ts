@@ -6,14 +6,30 @@ import { rand, shuffle } from "../_shared/game.ts";
 
 const MODEL = "claude-haiku-4-5-20251001";
 
-function templateLines(names: string[]): string[] {
+function templateLines(names: string[], lastDeath: string | null): string[] {
   if (names.length < 2) return ["بحثی باقی نمانده."];
-  const [a, b] = shuffle(names);
-  return [
+  const [a, b, c] = shuffle(names);
+  const accuse = [
     `${a}: من به ${b} مشکوکم، دیشب خیلی ساکت بود.`,
-    `${b}: من بی‌گناهم! بهتره دنبال کسی باشیم که زیادی شلوغش می‌کنه.`,
-    `${a}: رفتار ${b} طبیعی نیست...`,
+    `${a}: رفتار ${b} اصلاً طبیعی نیست، نظرتون چیه؟`,
+    `${a}: چرا ${b} هیچ‌وقت موضع روشن نمی‌گیره؟ مشکوکه.`,
+    `${a}: حس می‌کنم ${b} داره خودشو پشت بقیه قایم می‌کنه.`,
   ];
+  const defend = [
+    `${b}: من بی‌گناهم! بهتره دنبال کسی باشیم که زیادی شلوغش می‌کنه.`,
+    `${b}: چرا من؟ ${a} داره حواس‌ها رو پرت می‌کنه.`,
+    `${b}: این اتهام بی‌دلیله — به رأی‌های دیروز نگاه کنید.`,
+  ];
+  const strat = lastDeath
+    ? [
+        `${c}: مرگِ ${lastDeath} یعنی مافیا دنبال آدمای فعاله. مراقب باشیم.`,
+        `${c}: کی بیشتر از همه با ${lastDeath} درگیر بود؟`,
+      ]
+    : [
+        `${c}: دیشب کسی نمرد — یا دکتر درست حدس زد یا مافیا محتاط شد.`,
+        `${c}: شب آرومی بود؛ امروز باید با منطق پیش بریم.`,
+      ];
+  return [accuse[Math.floor(Math.random() * accuse.length)], defend[Math.floor(Math.random() * defend.length)], strat[Math.floor(Math.random() * strat.length)]];
 }
 
 async function aiLines(names: string[], round: number, lastDeath: string | null): Promise<string[] | null> {
@@ -69,7 +85,7 @@ Deno.serve(async (req) => {
       .select("payload").eq("room_id", room_id).eq("round", room.round).eq("type", "death").limit(1);
     const lastDeath = deaths?.[0]?.payload?.name ?? null;
 
-    const lines = (await aiLines(names, room.round, lastDeath)) ?? templateLines(names);
+    const lines = (await aiLines(names, room.round, lastDeath)) ?? templateLines(names, lastDeath);
     await db.from("game_events").insert({
       room_id, round: room.round, phase: "day", type: "chat", payload: { lines },
     });

@@ -88,14 +88,24 @@ export function assignRoles(count: number, extras: string[] = []): string[] {
 // ── تصمیم شبانهٔ یک بات ────────────────────────────────────────────
 export function botNightAction(seat: Seat, seats: Seat[]): NightAction | null {
   const role = seat.role;
+  const cv = (p: Seat) => p.meta.correctVotes ?? 0;
   if (role === "mafia") {
     const targets = cityAlive(seats);
-    return targets.length
-      ? { actor_seat: seat.seat_index, action_type: "kill", target_seat: rand(targets).seat_index }
-      : null;
+    if (!targets.length) return null;
+    // هدف: تهدیدآمیزترین شهروند (کسی که بیشترین رأیِ درست علیه مافیا داشته)؛
+    // اگر کسی برجسته نباشد، تصادفی.
+    const sorted = targets.slice().sort((a, b) => cv(b) - cv(a));
+    const best = cv(sorted[0]);
+    const pick = best > 0 ? rand(sorted.filter((t) => cv(t) === best)) : rand(targets);
+    return { actor_seat: seat.seat_index, action_type: "kill", target_seat: pick.seat_index };
   }
   if (role === "doctor") {
-    const t = rand(aliveSeats(seats));
+    // نجاتِ محتمل‌ترین هدفِ مافیا: رهبرِ شهر (بیشترین رأی درست)؛ گاهی تصادفی/خودش.
+    const alive = aliveSeats(seats);
+    const others = alive.filter((p) => p.seat_index !== seat.seat_index);
+    const sorted = others.slice().sort((a, b) => cv(b) - cv(a));
+    const lead = sorted[0];
+    const t = lead && cv(lead) > 0 && Math.random() < 0.7 ? lead : rand(alive);
     return { actor_seat: seat.seat_index, action_type: "save", target_seat: t.seat_index };
   }
   if (role === "detective") {
@@ -203,9 +213,15 @@ export function tallyVotes(
     if (!voter || !voter.alive) continue;
     const weight = voter.role === "mayor" ? 2 : 1;
     counts[v.target_seat] = (counts[v.target_seat] ?? 0) + weight;
-    // ردگیری رأی درست
+    // ردگیری رأی درست + پویاییِ مظنونیت:
+    // رأی به مافیا = هوشمندی (مظنونیت کم)، رأی به بی‌گناه = مشکوک (مظنونیت زیاد).
     const tgt = seats.find((s) => s.seat_index === v.target_seat);
-    if (tgt && teamOf(tgt.role) === "mafia") voter.meta.correctVotes = (voter.meta.correctVotes ?? 0) + 1;
+    if (tgt && teamOf(tgt.role) === "mafia") {
+      voter.meta.correctVotes = (voter.meta.correctVotes ?? 0) + 1;
+      voter.meta.suspicion = Math.max(0, (voter.meta.suspicion ?? 0) - 3);
+    } else if (tgt) {
+      voter.meta.suspicion = (voter.meta.suspicion ?? 0) + 2;
+    }
   }
   let outSeat: number | null = null;
   let maxV = -1;
