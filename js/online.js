@@ -53,6 +53,11 @@
     const b = $("authBtn");
     if (b) b.textContent = user ? "👤 " + ((user.user_metadata?.name || user.email || "حساب").slice(0, 12)) : "ورود";
   }
+  // راهنمای بازی (همیشه در دسترس، مستقل از ورود)
+  function howTo() { const m = $("howModal"); if (m) m.classList.remove("dn"); }
+  function closeHow() { const m = $("howModal"); if (m) m.classList.add("dn"); }
+  window.howTo = howTo; window.closeHow = closeHow;
+
   function openAuth() { if ($("authModal")) $("authModal").classList.remove("dn"); }
   function closeAuth() { if ($("authModal")) $("authModal").classList.add("dn"); }
   async function signInEmail() {
@@ -174,6 +179,8 @@
   // لابی انتظار + شمارش معکوس
   function renderWaiting(s) {
     if (window.goM) goM("waiting");
+    // بار اول، راهنمای بازی را خودکار نشان بده
+    try { if (!localStorage.getItem("mafia_howto")) { localStorage.setItem("mafia_howto", "1"); howTo(); } } catch (e) {}
     const r = s.room;
     const seats = s.seats || [];
     $("wtName").textContent = r.name || "اتاق";
