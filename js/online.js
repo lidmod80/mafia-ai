@@ -27,6 +27,7 @@
   let poll = null;           // پولِ پشتیبان
   let busy = false;          // قفل جلوگیری از resolve هم‌زمان
   let curKey = "";           // کلید فاز برای تشخیص تغییر
+  let pending = null;        // پیوستنِ معلق تا بعد از ورود (mode/roomId)
 
   // ── HTTP به Edge Function ───────────────────────────────────────
   async function call(fn, body) {
@@ -66,16 +67,55 @@
   async function signOut() { await sb.auth.signOut(); user = null; updateAuthUI(); toast("خارج شدی"); }
 
   // ── شروع بازی آنلاین ─────────────────────────────────────────────
-  async function playOnline(mode) {
+  async function playOnline(mode, roomId) {
     if (!sb) return toast("حالت آنلاین پیکربندی نشده است");
     await refreshUser();
-    if (!user) { openAuth(); return toast("برای بازی آنلاین اول وارد شو"); }
+    if (!user) { pending = { mode, roomId }; openAuth(); return toast("برای بازی آنلاین اول وارد شو"); }
     toast("در حال پیوستن به اتاق...");
-    const r = await call("join_room", { mode });
+    const r = await call("join_room", roomId ? { room_id: roomId } : { mode });
     if (r.error) return toast("خطا: " + r.error);
-    OG = { room_id: r.room_id, seat: r.seat_index, mode, chat: {} };
+    OG = { room_id: r.room_id, seat: r.seat_index, mode: mode || r.mode || "classic", chat: {} };
     curKey = "";
     enterRoom();
+  }
+  // پیوستن به یک اتاقِ مشخص (از لیست یا لینک دعوت)
+  const joinRoomById = (roomId) => playOnline(null, roomId);
+
+  // لیست زندهٔ اتاق‌های قابل‌پیوستن (از جدول rooms که عمومی خواندنی است)
+  async function listRooms() {
+    const el = $("roomList");
+    if (!el || !sb) return;
+    const { data: rooms } = await sb.from("rooms")
+      .select("id,name,mode,status,min_players,max_players")
+      .in("status", ["waiting", "countdown"]).order("created_at", { ascending: false }).limit(30);
+    const { data: seats } = await sb.from("seats_public").select("room_id");
+    const cnt = {};
+    (seats || []).forEach((s) => { cnt[s.room_id] = (cnt[s.room_id] || 0) + 1; });
+    const list = (rooms || []).filter((r) => (cnt[r.id] || 0) < r.max_players);
+    if (!list.length) {
+      el.innerHTML = '<div class="gs" style="text-align:center;color:var(--tx2);font-size:12px">اتاق بازی نیست — یکی بساز! از لابی «بازی آنلاین» را بزن.</div>';
+      return;
+    }
+    const modeFa = { classic: "کلاسیک", ranked: "رنکد", quick: "سریع", beginner: "مبتدی", custom: "سفارشی" };
+    el.innerHTML = list.map((r) => {
+      const c = cnt[r.id] || 0; const live = r.status === "countdown";
+      return `<div class="gs fc g3g">
+        <div style="flex:1">
+          <div class="fc g2g">${live ? '<span class="ld"></span>' : ""}<span class="h4">${r.name}</span>${live ? '<span class="bx bx-gr">در حال شروع</span>' : ""}</div>
+          <div style="font-size:10px;color:var(--tx2);margin-top:3px">${modeFa[r.mode] || r.mode} · ${fa(c)}/${fa(r.max_players)} بازیکن</div>
+        </div>
+        <button class="btn btn-p btn-xs" onclick="MafiaOnline.joinRoomById('${r.id}')">ورود</button>
+      </div>`;
+    }).join("");
+  }
+
+  // کپی لینک دعوت اتاق جاری
+  function shareRoom() {
+    if (!OG) return;
+    const url = location.origin + location.pathname + "?room=" + OG.room_id;
+    const done = () => toast("لینک دعوت کپی شد — برای دوستت بفرست ✉️");
+    if (navigator.clipboard) navigator.clipboard.writeText(url).then(done, () => prompt("لینک دعوت:", url));
+    else prompt("لینک دعوت:", url);
   }
 
   function enterRoom() {
@@ -377,14 +417,29 @@
     else if (_restart) _restart();
   };
 
-  // راه‌اندازی auth
+  // اگر بعد از ورود، پیوستنِ معلقی هست، ادامه بده
+  function resumePending() {
+    if (user && pending) { const p = pending; pending = null; closeAuth(); playOnline(p.mode, p.roomId); }
+  }
+
+  // تازه‌سازی زندهٔ لیست اتاق‌ها وقتی صفحهٔ «اتاق‌ها» باز می‌شود
+  if (hasSB) {
+    const sr = $("scRooms");
+    if (sr) new MutationObserver(() => { if (sr.classList.contains("on")) listRooms(); })
+      .observe(sr, { attributes: true, attributeFilter: ["class"] });
+  }
+
+  // راه‌اندازی auth + دیپ‌لینکِ دعوت (?room=<id>)
   if (sb) {
-    sb.auth.onAuthStateChange((_e, session) => { user = session?.user || null; updateAuthUI(); });
-    refreshUser();
+    sb.auth.onAuthStateChange((_e, session) => { user = session?.user || null; updateAuthUI(); resumePending(); });
+    const roomParam = new URLSearchParams(location.search).get("room");
+    refreshUser().then(() => {
+      if (roomParam) { pending = { roomId: roomParam }; if (user) resumePending(); else { openAuth(); toast("برای پیوستن به اتاقِ دعوت، وارد شو"); } }
+    });
   }
 
   window.MafiaOnline = {
-    playOnline, openAuth, closeAuth, signInEmail, signInGoogle, signOut,
-    leaveRoom, forceStart, _pick: pick, available: hasSB,
+    playOnline, joinRoomById, listRooms, shareRoom, openAuth, closeAuth,
+    signInEmail, signInGoogle, signOut, leaveRoom, forceStart, _pick: pick, available: hasSB,
   };
 })();

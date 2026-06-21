@@ -236,10 +236,12 @@ canvas#bg{position:fixed;inset:0;z-index:0;pointer-events:none}
     <div class="bx bx-b mb3" id="wtCount">۰/۰ بازیکن</div>
     <div id="wtSeats" class="gr mb3" style="gap:6px;text-align:right"></div>
     <div style="font-size:11px;color:var(--gold);margin-bottom:13px" id="wtTimer">در انتظار...</div>
-    <div class="f g2g" style="justify-content:center">
+    <div class="f g2g fw" style="justify-content:center">
+      <button class="btn btn-s btn-md" onclick="MafiaOnline.shareRoom()">📋 دعوت دوست</button>
       <button class="btn btn-p btn-md" id="wtStart" style="display:none" onclick="MafiaOnline.forceStart()">شروع با بات‌ها 🤖</button>
       <button class="btn btn-g btn-md" onclick="MafiaOnline.leaveRoom()">خروج</button>
     </div>
+    <div style="font-size:10px;color:var(--tx3);margin-top:10px">لینک دعوت را برای دوستت بفرست تا در همین اتاق به تو بپیوندد.</div>
   </div>
 </div>
 
